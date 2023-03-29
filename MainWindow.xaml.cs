@@ -27,55 +27,33 @@ namespace AsyncAwaitDemo
     /// </summary>
     public partial class MainWindow : Window
     {
+        private List<string> websites { get; set; } = new();
         public MainWindow()
         {
             InitializeComponent();
-           
+            this.websites = PrepData();
         }
-
 
         private List<string> PrepData()
         {
             List<string> output = new List<string>();
             output.Add("https://www.google.com");
-            output.Add("https://www.google.com");
-            output.Add("https://www.google.com");
-            output.Add("https://www.google.com");
-            output.Add("https://www.google.com");
-            output.Add("https://www.google.com");
-            output.Add("https://www.google.com");
-            output.Add("https://www.google.com");
-            output.Add("https://www.google.com");
-            output.Add("https://www.google.com");
-            output.Add("https://www.google.com");
-            output.Add("https://www.google.com");
-            output.Add("https://www.google.com");
-            output.Add("https://www.google.com");
-            output.Add("https://www.google.com");
-            output.Add("https://www.google.com");
             output.Add("https://www.yahoo.com");
             output.Add("https://www.cnn.com");
-            output.Add("https://spokaneschools.org");
             output.Add("https://www.stackoverflow.com");
             output.Add("https://www.codeproject.com");
             return output;
         }
-
-
         private void SyncButton_Click(object sender, RoutedEventArgs e)
         {
-
-            List<string> websites = PrepData();
-
+            ClearTextArea();
             var watch = System.Diagnostics.Stopwatch.StartNew();
-
-
             CurrentStatusLabel.Content = "START - Running Syncronous";
             foreach (var website in websites)
             {
                 //TODO: Find a way to download website syncronously
                 WebsiteDataModel model = DownloadWebsite(website);
-                tbMultiLine.Text += $"{model.Url} - Downloaded {model.Data.Length} characters. {Environment.NewLine}";
+                UpdateTextArea(model);
             }
             CurrentStatusLabel.Content = "END - Running Syncronous";
 
@@ -84,9 +62,62 @@ namespace AsyncAwaitDemo
             ElapsedTime.Content = $"{elaspsedMs} ms";
 
         }
+        private async void AsyncButton_Click(object sender, RoutedEventArgs e)
+        {
+            ClearTextArea();
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+            CurrentStatusLabel.Content = "START - Running Asyncronous";
 
+            foreach (var website in websites)
+            {
+                WebsiteDataModel model = await DownloadWebsiteAsync(website);
+                UpdateTextArea(model); 
+            }
 
+            CurrentStatusLabel.Content = "END - Running Asyncronous";
 
+            watch.Stop();
+            var elaspsedMs = watch.ElapsedMilliseconds;
+            ElapsedTime.Content = $"{elaspsedMs} ms";
+
+        }
+        private async void AsyncButtonInParallel_Click(object sender, RoutedEventArgs e)
+        {
+            ClearTextArea();
+
+            List<Task<WebsiteDataModel>> tasks = new List<Task<WebsiteDataModel>>();
+
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+            CurrentStatusLabel.Content = "START - Running Asyncronous (In Parallel)";
+
+            foreach (var website in websites)
+            {
+                tasks.Add(Task.Run(() => DownloadWebsiteAsync(website)));
+            }
+
+            var results = await Task.WhenAll(tasks); //Wait for all tasks to complete
+
+            foreach (var model in results)
+            {
+                UpdateTextArea(model);
+            }
+
+            CurrentStatusLabel.Content = "END - Running Asyncronous (In Parallel)";
+            
+            watch.Stop();
+            
+            var elaspsedMs = watch.ElapsedMilliseconds;
+            ElapsedTime.Content = $"{elaspsedMs} ms";
+
+        }
+        private void ClearTextArea()
+        {
+            tbMultiLine.Text = String.Empty;
+        }
+        private void UpdateTextArea(WebsiteDataModel model)
+        {
+            tbMultiLine.Text += $"{model.Url} - Downloaded {model.Data.Length} characters. {Environment.NewLine}";
+        }
         private WebsiteDataModel DownloadWebsite(string websiteUrl)
         {
             WebClient client = new WebClient();
@@ -98,7 +129,6 @@ namespace AsyncAwaitDemo
                 Data = pageData
             };
         }
-
         private async Task<WebsiteDataModel> DownloadWebsiteAsync(string websiteUrl)
         {
             WebClient client = new WebClient();
@@ -109,57 +139,6 @@ namespace AsyncAwaitDemo
                 Url = websiteUrl,
                 Data = pageData
             };
-        }
-
-
-
-
-        private async void AsyncButton_Click(object sender, RoutedEventArgs e)
-        {
-            List<string> websites = PrepData();
-
-            var watch = System.Diagnostics.Stopwatch.StartNew();
-            CurrentStatusLabel.Content = "START - Running Asyncronous";
-
-            foreach (var website in websites)
-            {
-                WebsiteDataModel model = await DownloadWebsiteAsync(website);
-                tbMultiLine.Text += $"{model.Url} - Downloaded {model.Data.Length} characters. {Environment.NewLine}";
-            }
-
-            CurrentStatusLabel.Content = "END - Running Asyncronous";
-
-            watch.Stop();
-            var elaspsedMs = watch.ElapsedMilliseconds;
-            ElapsedTime.Content = $"{elaspsedMs} ms";
-
-        }
-
-        private async void AsyncButtonInParallel_Click(object sender, RoutedEventArgs e)
-        {
-            List<string> websites = PrepData();
-            List<Task<WebsiteDataModel>> tasks = new List<Task<WebsiteDataModel>>();
-
-            var watch = System.Diagnostics.Stopwatch.StartNew();
-            CurrentStatusLabel.Content = "START - Running Asyncronous (In Parallel)";
-
-            foreach (var website in websites)
-            {
-                tasks.Add(Task.Run(() => DownloadWebsiteAsync(website)));
-            }
-
-            var results = await Task.WhenAll(tasks);
-
-            foreach (var model in results)
-            {
-                tbMultiLine.Text += $"{model.Url} - Downloaded {model.Data.Length} characters. {Environment.NewLine}";
-            }
-
-            CurrentStatusLabel.Content = "END - Running Asyncronous (In Parallel)";
-            watch.Stop();
-            var elaspsedMs = watch.ElapsedMilliseconds;
-            ElapsedTime.Content = $"{elaspsedMs} ms";
-
         }
 
     }
