@@ -5,18 +5,26 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AsyncAwaitDemo"
         mc:Ignorable="d"
-        Title="AsyncAwait Demo" Height="622" Width="800">
-    <Grid RenderTransformOrigin="0.497,0.383" Height="800" VerticalAlignment="Top">
-        <StackPanel RenderTransformOrigin="0.498,0.893" Margin="0,39,0,-75">
-            <Button Width="764" Height="45" Name="SyncButton" Click="SyncButton_Click">Load Sync</Button>
-            <Button Width="764" Height="45" Name="AsyncButton" Click="AsyncButton_Click">Load Async</Button>
-            <Line></Line>
+        Title="AsyncAwait Demo" Height="718" Width="800">
+    <Grid RenderTransformOrigin="0.497,0.383" Height="718" VerticalAlignment="Top">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="4*"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel RenderTransformOrigin="0.5,0.95" Margin="0,39,0,0" Height="640" VerticalAlignment="Top" Grid.ColumnSpan="2">
+            <Label Name="Title" Content="Async/Await Demo" FontSize="24"/>
+            <Button Width="764" Height="45" Name="SyncButton" Click="SyncButton_Click">Execute Synchronous</Button>
+            <Button Width="764" Height="45" x:Name="AsyncButton" Click="AsyncButton_Click" Content="Execute Asynchronous"/>
+            <Button Width="764" Height="45" x:Name="AsyncParallelButton" Click="AsyncButtonInParallel_Click" Content="Execute Asynchronous (In Parallel)"/>
             <Label>Results:</Label>
             <TextBox x:Name="tbMultiLine"
                       TextWrapping="Wrap"
                       AcceptsReturn="True"
-                      VerticalScrollBarVisibility="Visible" Height="320" Width="576" RenderTransformOrigin="0.508,2.288"/>
-            <Label Content="Label" Name="StatusLabel"/>
+                      VerticalScrollBarVisibility="Visible" Height="198" Width="576" RenderTransformOrigin="0.508,2.288"/>
+            <Label Content="Status:" Name="StatusLabel"/>
+            <Label Content="N/A" Name="CurrentStatusLabel"/>
+            <Label Name="ElapsedTimeLabel" Content="Elasped Time:"/>
+            <Label Name="ElapsedTime" Content="N/A"/>
         </StackPanel>
 
 
