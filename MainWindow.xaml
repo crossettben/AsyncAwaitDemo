@@ -5,8 +5,22 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AsyncAwaitDemo"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="AsyncAwait Demo" Height="622" Width="800">
+    <Grid RenderTransformOrigin="0.497,0.383" Height="800" VerticalAlignment="Top">
+        <StackPanel RenderTransformOrigin="0.498,0.893" Margin="0,39,0,-75">
+            <Button Width="764" Height="45" Name="SyncButton" Click="SyncButton_Click">Load Sync</Button>
+            <Button Width="764" Height="45" Name="AsyncButton" Click="AsyncButton_Click">Load Async</Button>
+            <Line></Line>
+            <Label>Results:</Label>
+            <TextBox x:Name="tbMultiLine"
+                      TextWrapping="Wrap"
+                      AcceptsReturn="True"
+                      VerticalScrollBarVisibility="Visible" Height="320" Width="576" RenderTransformOrigin="0.508,2.288"/>
+            <Label Content="Label" Name="StatusLabel"/>
+        </StackPanel>
+
 
     </Grid>
+
+
 </Window>
